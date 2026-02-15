@@ -1,23 +1,16 @@
 # Qiita / Zenn 記事管理リポジトリ
 
-このリポジトリは、Qiita と Zenn の記事を 1 か所で管理するためのモノレポです。
-
-- `qiita/`: Qiita CLI で管理する記事
-- `zenn/`: Zenn CLI で管理する記事・本
+Qiita と Zenn の記事を 1 つのリポジトリで管理します。
 
 ## ディレクトリ構成
 
 ```text
 .
-├── qiita/
-│   ├── .github/workflows/publish.yml  # Qiita 公開用 GitHub Actions
-│   ├── public/                         # Qiita 記事
-│   └── qiita.config.json
-├── zenn/
-│   ├── articles/                       # Zenn 記事
-│   ├── books/                          # Zenn 本
-│   ├── images/                         # Zenn 画像
-│   └── package.json
+├── articles/          # Zenn 記事
+├── books/             # Zenn 本
+├── images/            # Zenn 用画像
+├── qiita/             # Qiita CLI 用プロジェクト
+├── package.json       # Zenn CLI 依存
 └── README.md
 ```
 
@@ -29,12 +22,11 @@
 ## セットアップ
 
 ```bash
-# zenn
-cd zenn
+# ルート (Zenn CLI)
 npm install
 
 # qiita
-cd ../qiita
+cd qiita
 npm install
 ```
 
@@ -43,7 +35,6 @@ npm install
 ### Zenn
 
 ```bash
-cd zenn
 npx zenn new:article
 npx zenn new:book
 npx zenn preview
@@ -58,16 +49,17 @@ npx qiita preview
 npx qiita publish <basename>
 ```
 
-## 公開フロー
-
-### Qiita
-
-- `qiita/.github/workflows/publish.yml`: `push`（`main`/`master`）または手動実行で Qiita へ公開
+## 記事のアップロード方法
 
 ### Zenn
 
-- Zenn CLI には Qiita のような `publish` コマンドはありません。
-- Zenn 側の GitHub 連携を有効にした状態で、`zenn/articles/*.md` の `published: true` を含む変更を `master` にマージすると公開されます。
+- `articles/*.md` の front matter で `published: true` にした記事が対象です。
+- `master` ブランチにマージされると、Zenn の GitHub 連携により自動でアップロードされます。
+- Qiita のような手動 `publish` コマンドはありません。
+
+### Qiita
+
+- `qiita/` ディレクトリで `npx qiita publish <basename>` を実行してアップロードします。
 
 ## 参考
 
