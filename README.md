@@ -1,94 +1,75 @@
-# Qiita & Zenn Content Repository
+# Qiita / Zenn 記事管理リポジトリ
 
-このリポジトリは、Qiita と Zenn の記事を同一のワークスペースで管理・更新するためのコンテンツリポジトリです。Zenn 用のルートディレクトリと、Qiita CLI 用の `qiita/` ディレクトリに分かれており、どちらのプラットフォーム向けの記事もローカルで作成・プレビュー・公開できます。
+このリポジトリは、Qiita と Zenn の記事を 1 か所で管理するためのモノレポです。
+
+- `qiita/`: Qiita CLI で管理する記事
+- `zenn/`: Zenn CLI で管理する記事・本
 
 ## ディレクトリ構成
 
-```
+```text
 .
-├─ articles/            # Zenn 記事 (Markdown)
-├─ books/               # Zenn 本 (Markdown)
-├─ qiita/               # Qiita CLI プロジェクト
-│  ├─ public/           # 下書き・投稿用の Markdown
-│  └─ qiita.config.json # Qiita CLI の設定
-└─ README.md
+├── qiita/
+│   ├── .github/workflows/publish.yml  # Qiita 公開用 GitHub Actions
+│   ├── public/                         # Qiita 記事
+│   └── qiita.config.json
+├── zenn/
+│   ├── articles/                       # Zenn 記事
+│   ├── books/                          # Zenn 本
+│   ├── images/                         # Zenn 画像
+│   └── package.json
+└── README.md
 ```
 
-## 必要要件
+## 前提条件
 
-- Node.js 16 以上
-- npm または yarn
-- Qiita への投稿時に必要となる個人アクセストークン（`qiita login` で設定）
+- Node.js 18 以上
+- npm
 
 ## セットアップ
 
-1. リポジトリをクローンします。
-2. Zenn 用の依存パッケージをインストールします。
+```bash
+# zenn
+cd zenn
+npm install
 
-   ```bash
-   npm install
-   ```
+# qiita
+cd ../qiita
+npm install
+```
 
-3. Qiita CLI 用の依存パッケージをインストールします。
+## 使い方
 
-   ```bash
-   cd qiita
-   npm install
-   ```
+### Zenn
 
-## Zenn での記事作成・プレビュー
+```bash
+cd zenn
+npx zenn new:article
+npx zenn new:book
+npx zenn preview
+```
 
-- 記事作成
+### Qiita
 
-  ```bash
-  npx zenn new:article
-  ```
+```bash
+cd qiita
+npx qiita login
+npx qiita preview
+npx qiita publish <basename>
+```
 
-- 本の作成
+## 公開フロー
 
-  ```bash
-  npx zenn new:book
-  ```
+### Qiita
 
-- ローカルプレビュー
+- `qiita/.github/workflows/publish.yml`: `push`（`main`/`master`）または手動実行で Qiita へ公開
 
-  ```bash
-  npx zenn preview
-  ```
+### Zenn
 
-  ブラウザで `http://localhost:8000` を開き、記事や本の内容を確認します。
+- Zenn CLI には Qiita のような `publish` コマンドはありません。
+- Zenn 側の GitHub 連携を有効にした状態で、`zenn/articles/*.md` の `published: true` を含む変更を `master` にマージすると公開されます。
 
-## Qiita での記事作成・プレビュー・投稿
+## 参考
 
-Qiita CLI を使用する際は `qiita/` ディレクトリで作業します。
-
-- Qiita へのログイン（初回のみ）
-
-  ```bash
-  cd qiita
-  npx qiita login
-  ```
-
-- 記事のプレビュー
-
-  ```bash
-  npx qiita preview
-  ```
-
-- 記事の投稿
-
-  ```bash
-  npx qiita publish
-  ```
-
-  投稿時には Qiita CLI が投稿対象の記事を選択するプロンプトを表示します。
-
-## 運用メモ
-
-- 記事は Markdown で管理されます。Zenn と Qiita で共通化できる場合はファイルを共有し、片方専用の記事はそれぞれのディレクトリに配置してください。
-- プレビューで確認した内容をコミットし、Pull Request でレビューしたうえで公開する運用を推奨します。
-
-## 参考リンク
-
-- [Zenn CLI 公式ドキュメント](https://zenn.dev/zenn/articles/zenn-cli-guide)
-- [Qiita CLI 公式ドキュメント](https://github.com/increments/qiita-cli)
+- [Zenn CLI ガイド](https://zenn.dev/zenn/articles/zenn-cli-guide)
+- [Qiita CLI](https://github.com/increments/qiita-cli)
